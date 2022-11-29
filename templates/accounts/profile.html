@@ -1,0 +1,43 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block title %}Profile{% endblock title %}
+{% block body %}
+<div class="py-16">
+    <div class="container m-auto space-y-8 px-6 text-gray-500 md:px-12 lg:px-20">
+      <div class="flex items-center justify-center space-x-2">
+        <img
+          loading="lazy"
+          width="220"
+          height="220"
+          src="{% if user.image %}{{user.image.url}}{% else %} {% static 'img/user.png' %} {% endif %}"
+          alt="member photo"
+          class="z-10 h-16 w-16 rounded-full object-cover"
+        />
+      </div>
+      <div class="m-auto space-y-6 md:w-8/12 lg:w-7/12">
+        <h1 class="text-center text-xl font-bold text-gray-800">{{user.email}}</h1>
+        <form class="max-w-lg border rounded-lg mx-auto" method="POST" action="" enctype="multipart/form-data" >
+          {% csrf_token %}
+          <div class="flex flex-col gap-4 p-4 md:p-8">
+            <div>
+              <label class="block mb-2 text-sm font-medium text-gray-900" for="file_input">Profile Picture</label>
+<input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:p-2 file:border-0" required name="image"  id="file_input" type="file">
+<p class="mt-1 text-sm text-gray-500" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
+            </div>
+    
+            <div>
+              <label for="username" class="inline-block text-gray-800 text-sm sm:text-base mb-2">Username</label>
+              <input name="username" required type="text" class="w-full bg-gray-50 text-gray-800 border focus:ring ring-indigo-300 rounded outline-none transition duration-100 px-3 py-2" />
+            </div>
+    
+            <button type="submit" class="block bg-gray-800 hover:bg-gray-700 active:bg-gray-600 focus-visible:ring ring-gray-300 text-white text-sm md:text-base font-semibold text-center rounded-lg outline-none transition duration-100 px-8 py-3">Submit</button>
+          </div>
+    
+          <div class="flex justify-center items-center bg-gray-100 p-4">
+            <p class="text-gray-500 text-sm text-center">Don't have an account? <a href="#" class="text-indigo-500 hover:text-indigo-600 active:text-indigo-700 transition duration-100">Register</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endblock body %}

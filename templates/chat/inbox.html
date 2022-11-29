@@ -1,0 +1,55 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block body %}
+<div class="max-w-screen-xl px-4 md:px-8 mx-auto mt-10 min-h-[26rem]">
+    <!-- text - start -->
+    <div class="mb-10 md:mb-16">
+      <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold text-center mb-4 md:mb-6">Inbox</h2>
+    </div>
+    <!-- text - end -->
+    <a href="{% url 'search' %}">
+    <button class="bg-gray-900 px-3 py-2 rounded-full text-gray-200 hover:bg-gray-800 flex items-center justify-between"><svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M16 2H8C4.691 2 2 4.691 2 8v13a1 1 0 0 0 1 1h13c3.309 0 6-2.691 6-6V8c0-3.309-2.691-6-6-6zm4 14c0 2.206-1.794 4-4 4H4V8c0-2.206 1.794-4 4-4h8c2.206 0 4 1.794 4 4v8z"/><path d="M7 9h10v2H7zm0 4h7v2H7z"/></svg>
+      Add Chat</button></a>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+      <!-- person - start -->
+      {% for room in rooms %}
+      <div class="border-gray-400 border rounded-lg p-0.5 hover:bg-gray-300">
+      <a href="{% url 'chat' room.id %}">
+      <div class="flex flex-col items-center cursor-pointer rounded-lg">
+        <span class="inline-flex items-center justify-center h-[3.875rem] w-[3.875rem] rounded-full bg-gray-800">
+            <span class="text-xl font-medium text-white leading-none capitalize">
+              {% if room.owner|stringformat:"s" == user|stringformat:"s" %}
+              <img
+                loading="lazy"
+                width="220"
+                height="220"
+                src="{{room.user.image.url}}"
+                alt="member photo"
+                class="z-10 h-16 w-16 rounded-full object-cover"
+              />
+              {% elif room.user|stringformat:"s" == user|stringformat:"s" %}
+              <img
+                loading="lazy"
+                width="220"
+                height="220"
+                src="{{room.owner.image.url}}"
+                alt="member photo"
+                class="z-10 h-16 w-16 rounded-full object-cover"
+              />
+              {%else%}
+              {% if room.owner|stringformat:"s" == user|stringformat:"s" %} {{room.user.username|slice:1}} {% else %}{{room.owner.username|slice:1}} {% endif %}
+              {% endif %}
+            </span>
+          </span>
+        <div>
+          <div class="text-gray-900 md:text-lg font-bold text-center capitalize">{% if room.owner|stringformat:"s" == user|stringformat:"s" %} {{room.user.username}} {% else %}{{room.owner.username}} {% endif %}</div>
+        </div>
+      </div>
+    </a>
+  </div>
+      {% endfor %}
+      <!-- person - end -->
+    </div>
+  </div>
+  {% endblock body %}

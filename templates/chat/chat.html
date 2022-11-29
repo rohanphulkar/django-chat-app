@@ -1,0 +1,91 @@
+{% extends '../base.html' %} {% block title %}Chat{% endblock title %} {% block body %}
+<section class="bg-white min-h-max">
+  <h1 class="text-4xl font-semibold text-center text-gray-800 capitalize">
+    {{username}}
+  </h1>
+  <div class="container max-w-xl px-6 py-4 mx-auto">
+    <div class="h-[28rem] overflow-auto">
+      <div class="mt-4" id="chat-message">
+        {% for chat in chats %}
+        <div class="border-2 border-gray-100 rounded-lg my-2 {% if chat.username|stringformat:"s" == user|stringformat:"s" %} bg-gray-200 {% endif %}"><div class=" w-full p-3 {% if chat.username|stringformat:"s" == user|stringformat:"s" %} text-right {% endif %}">
+        <h1 class="font-semibold text-gray-700">{{chat.content}}</h1>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+    <div class="w-full max-w-full flex gap-2 mb-3 sm:mb-5">
+      <input
+        placeholder="Message"
+        name="message"
+        id="chat-message-input"
+        class="w-full flex-1 bg-gray-white text-gray-800 placeholder-gray-400 border border-gray-500 placeholder:text-gray-500 rounded outline-none transition duration-100 px-3 py-2"
+      />
+
+      <button
+        id="chat-message-submit"
+        class="inline-block bg-gray-900 text-white text-sm hover:bg-gray-800 md:text-base font-semibold text-center rounded outline-none transition duration-100 px-8 py-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="#fff"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="m21.426 11.095-17-8A1 1 0 0 0 3.03 4.242l1.212 4.849L12 12l-7.758 2.909-1.212 4.849a.998.998 0 0 0 1.396 1.147l17-8a1 1 0 0 0 0-1.81z"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+{{room_name.name|json_script:"json-roomname"}}
+{{cur_user|json_script:"json-cur_user"}}
+<script>
+  const roomName = JSON.parse(
+    document.getElementById("json-roomname").textContent
+  );
+  const userName = JSON.parse(
+    document.getElementById("json-cur_user").textContent
+  );
+  const chatSocket = new WebSocket(
+    "ws://" + window.location.host + "/ws/" + roomName + "/"
+  );
+  chatSocket.onmessage = function (e) {
+    console.log("onmessage");
+    const data = JSON.parse(e.data);
+    if (data.message) {
+      console.log("elem", document.querySelector("#chat-message"));
+      document.querySelector("#chat-message").innerHTML +=
+        '<div class="border-2 border-gray-100 rounded-lg my-2 bg-gray-200">' +
+        '<div class=" w-full p-3  text-right">' +
+        '<h1 class="font-semibold text-gray-700">' +
+        data.message +
+        "</h1>" +
+        "</div>" +
+        "</div>";
+    } else {
+      alert("message is empty");
+    }
+  };
+  chatSocket.onclose = function (e) {
+    console.log("the socket close unexpectedly");
+  };
+
+  document.querySelector("#chat-message-submit").onclick = function (e) {
+    var messageInput = document.querySelector("#chat-message-input");
+    const message = messageInput.value;
+    chatSocket.send(
+      JSON.stringify({
+        message: message,
+        username: userName,
+        room: roomName,
+      })
+    );
+
+    messageInput.value = "";
+  };
+</script>
+{% endblock body %}
